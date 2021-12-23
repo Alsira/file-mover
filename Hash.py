@@ -5,10 +5,10 @@ import hashlib
 import random
 import math
 
-def hashFile(file):
+def hashFile(file: str) -> str:
 
     hash_list = hashlib.algorithms_avalible
-    hash_to_use = None
+    hash_to_use: str
 
     # Check for avalible algorithms
     if not "blake2s" in hash_list:
