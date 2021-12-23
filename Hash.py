@@ -1,4 +1,4 @@
-# Author : Alsira
+# Author : Tyler J.
 # Description : Functions that hashes files or data
 
 import hashlib
