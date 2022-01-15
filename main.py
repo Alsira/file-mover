@@ -19,7 +19,7 @@ if __name__ == '__main__':
     dest   = argv[2] if argv[2][len(argv[2]) - 1] != '\\' else argv[1] + '\\'
 
     # Create the lists (relative paths)
-    src_dir_list = DirList.CreateDirMap(source) 
+    src_dir_list  = DirList.CreateDirMap(source) 
     dest_dir_list = DirList.CreateDirMap(dest)
 
     # Iterate through each path
