@@ -7,10 +7,10 @@ import math
 
 def hashFile(file: str) -> str:
 
-    hash_list = hashlib.algorithms_avalible
+    hash_list = hashlib.algorithms_available
     hash_to_use: str
 
-    # Check for avalible algorithms
+    # Check for avalible algorithms (has a priority)
     if not "blake2s" in hash_list:
         if not "md5" in hash_list:
             if not "md4" in hash_list:
