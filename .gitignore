@@ -5,3 +5,6 @@
 /quick_move/test1
 /quick_move/test2
 /quick_move/test3
+/Quick_Move.egg-info/
+/build
+/dist
