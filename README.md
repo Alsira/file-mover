@@ -2,6 +2,7 @@
 * [General](#general)
 * [Usage](#usage)
 * [Setup](#setup)
+* [Dev](#dev)
 
 ---
 ## General
@@ -20,3 +21,8 @@
 ## Usage
 Currently this only takes a source folder or file and a destination.
 * `qmv src dest`
+
+## Dev
+* Simply use `python setup.py develop` to start dev with this.
+---
+Any help would be great ╰(*°▽°*)╯
