@@ -2,7 +2,9 @@ import os
 import sys
 import asyncio
 import threading
+import progressbar
 from math import pow
+
 
 # Local
 from . import DirList
@@ -33,7 +35,7 @@ def Calcualate_Size(bytes: int) -> str:
 
 
 # Do something here
-async def program():
+def program():
 
     argv = sys.argv
     argc = len(argv)
@@ -68,24 +70,28 @@ async def program():
             if h1 != h2:
                 files_to_write.append((source, dest))
 
-    elif os.path.isdir(source) and os.path.isdir(dest):
+    elif os.path.isdir(source):
         
         # Create the lists (relative paths)
         print('Searching ' + source + '...')
         src_dir_list  = DirList.CreateDirMap(source) 
-        
-        print('Searching ' + dest + '...')
-        dest_dir_list = DirList.CreateDirMap(dest)
+        dest_dir_list = list()
+
+        # Handle Dest Directory
+        if os.path.exists(dest):
+            print('Searching ' + dest + '...')
+            dest_dir_list = DirList.CreateDirMap(dest)
+
+        else:
+            os.mkdir(dest)
+            print('Created directory ' + dest)
 
         # Remove the beginning directory
         src_dir_list = [dir[len(source) + 1:] for dir in src_dir_list]
         dest_dir_list = [dir[len(dest) + 1:] for dir in dest_dir_list]
 
-        # Quickly create the main directory if it does not exist
-        if not os.path.exists(dest):
-            os.mkdir(dest)
-
         print("Finding modified files...")
+        
         # Iterate through each path and detect files that need to be replaced (Also create the nessary folders)
         for src_path in src_dir_list:
 
@@ -122,6 +128,9 @@ async def program():
                     
                     files_to_write.append((abs_src_path, abs_dest_path))
                     
+    if len(files_to_write) == 0:
+        print("Nothing to write.")
+        sys.exit(0)
 
     # Start transfering files
     print("Calculating size to write...")
@@ -131,17 +140,17 @@ async def program():
     if total_bytes > 0:
         
         print("Moving " + Calcualate_Size(total_bytes))
-        cli_task = asyncio.create_task(cli.cli(bytes_written, byte_lock, total_bytes))
-        
+        cli_task = threading.Thread(target=cli.cli, args=(bytes_written, byte_lock, total_bytes))
+        cli_task.setDaemon(True)
+        cli_task.start()
+
         # Now we start to write the data
         for file_tuple in files_to_write:
             Transfer.Transfer(file_tuple[0], file_tuple[1], bytes_written, byte_lock)
-        
+         
+
         # This will wait for the cli to finish
-        await cli_task
-    
-    else:
-        print("Nothing to write.")
+        cli_task.join()
 
     sys.exit(0)
                 
