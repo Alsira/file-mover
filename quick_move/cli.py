@@ -6,7 +6,7 @@ def cli(written: list, lock: threading.Lock(), max_size: int):
 
     # Create the progress bar
     widgets = [
-        "Transfered ",
+        "Transfering ",
         progressbar.Percentage(),
         ' ',
         progressbar.Bar(marker=progressbar.RotatingMarker()),
