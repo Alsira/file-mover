@@ -1,16 +1,14 @@
-import ctypes
 import threading
+from math import pow
 
-def Transfer(src_dir: str, dest_dir: str, write, lock: threading.Lock) -> int:
-
-    return_value: int
+def Transfer(src_dir: str, dest_dir: str, write: list, lock: threading.Lock) -> int:
 
     try:
 
         src_file  = open(src_dir, 'rb')
         dest_file = open(dest_dir, 'wb')
 
-        buffer = 1024
+        buffer = int(pow(1024, 2) * 50)
         data   = src_file.read(buffer)
         while len(data) > 0:
             
@@ -19,19 +17,13 @@ def Transfer(src_dir: str, dest_dir: str, write, lock: threading.Lock) -> int:
             lock.release()
 
             data = src_file.read(buffer)
-
-        return_value = write[0]
-    
-    except:
-
-        return_value = -1
-    
-    finally:
-
+            
         src_file.close()
         dest_file.close()
-        if lock.locked():
-            lock.release()
+        
+        return write[0]
+    
+    except IOError:
 
-        return return_value
+        return -1
         
