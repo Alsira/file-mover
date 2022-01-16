@@ -7,6 +7,10 @@
 ### General
 * This uses python >=3.6
 * Will compare by hashing files and if they are different, then it will be transfered
+
+![Moving](./images/First Move.png)
+![Slow](./images/Slow Move.png)
+
 ---
 ### Setup
 * Easy setup, `python setup.py install`
