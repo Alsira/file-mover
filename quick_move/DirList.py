@@ -12,13 +12,12 @@ def __CreateDirHelper(search_path: str, dir_list: list) -> None:
         # Ignore current and parent directories
         if path != "." and path != "..":
             
-            path = search_path + '\\' + path
+            path = '/'.join([search_path, path])
 
             # Append the directory or file, then decend if this is a directory
             dir_list.append(path)
 
             if os.path.isdir(path):
-                print(path)
                 __CreateDirHelper(path, dir_list)
 
 # Uses recursion in the helper to find files
@@ -27,12 +26,18 @@ def CreateDirMap(path: str) -> list:
     # List of directories
     dirs = list()
     
-    for p in os.listdir(path):
+    try:
+        for p in os.listdir(path):
 
-        # Add directory to the list, decend if it is a directory
-        dirs.append(path + p)
+            p = '/'.join([path, p])
 
-        if os.path.isdir(p):
-            __CreateDirHelper(p, dirs)
+            # Add directory to the list, decend if it is a directory
+            dirs.append(p)
+
+            if os.path.isdir(p):
+                __CreateDirHelper(p, dirs)
         
-    return dirs
+        return dirs
+
+    except:
+        return list()

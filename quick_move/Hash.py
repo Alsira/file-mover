@@ -37,7 +37,7 @@ def hashFile(file: str) -> str:
     with open(file, "rb") as f:
         buffer = f.read(CHUNKSIZE)
         while len(buffer) > 0:
-            hasher.update(f.read(CHUNKSIZE))
+            hasher.update(buffer)
             buffer = f.read(CHUNKSIZE)
 
     return hasher.hexdigest()
