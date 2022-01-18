@@ -1,10 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "transfer.h"
-#include "lock.h"
 
-int transfer(char* src_name, char* dest_file, unsigned int* bytes, int* lock_status, unsigned int chunk_size) {
+int transfer(char* src_name, char* dest_file, unsigned int* bytes, pthread_mutex_t mutex, unsigned int chunk_size) {
 
     FILE *in, *out;
 
@@ -19,22 +15,21 @@ int transfer(char* src_name, char* dest_file, unsigned int* bytes, int* lock_sta
     }
 
     /* Buffer and temperary space to write transfer amount */
-    unsigned int temp_bytes;
+    size_t temp_bytes;
     unsigned char* buf = alloc(chunk_size); /* stack memory space */
 
     /* Read in data */
-    temp_bytes = fread((void*)buf, (size_t)1, chunk_size, in);
+    size_t amount_read = fread((void*)buf, (size_t)1, chunk_size, in);
     while (temp_bytes > 0) {
 
-        fwrite((void*)buf, (size_t)1, temp_bytes, out);
+        temp_bytes = fwrite((void*)buf, (size_t)1, amount_read, out);
 
         /* Report after writting */
-        lock(lock_status);
+        pthread_mutex_lock(mutex);
         *bytes += temp_bytes;
-        unlock(lock_status);
+        pthread_mutex_unlock(mutex);
 
         temp_bytes = fread((void*)buf, (size_t)1, chunk_size, in);
-
 
    }
 
