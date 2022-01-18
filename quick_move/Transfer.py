@@ -1,29 +1,33 @@
 import threading
-from math import pow
+from math import ceil
 
-def Transfer(src_dir: str, dest_dir: str, write: list, lock: threading.Lock) -> int:
+from . import Copy
 
-    try:
+def transfer(copy_dirs: list, queues: int, bytes: list, lock: threading.Lock) -> None:
 
-        src_file  = open(src_dir, 'rb')
-        dest_file = open(dest_dir, 'wb')
+    count = 0 # This is the current index of the start of the slice
+    per_thread_dir = ceil(len(copy_dirs) / queues) if int(len(copy_dirs) / queues) else 1 # The number of dirs per copy thread
 
-        buffer = int(pow(1024, 2) * 50)
-        data   = src_file.read(buffer)
-        while len(data) > 0:
-            
-            lock.acquire()
-            write[0] += dest_file.write(data)
-            lock.release()
+    dir_size = len(copy_dirs)
 
-            data = src_file.read(buffer)
-            
-        src_file.close()
-        dest_file.close()
-        
-        return write[0]
+    threads = list()
+
+    # Loop and load threads
+    for _ in range(queues):
+
+        end_range = count + per_thread_dir if count + per_thread_dir <= dir_size else dir_size 
+
+        # Start the thread
+        t = threading.Thread(target=Copy.copy_dir, args=(copy_dirs[count:end_range], bytes, lock))
+        t.setDaemon(True)
+        t.start()
+
+        threads.append(t)
+
+        count += per_thread_dir
+
+    # wait for each thread to join
+    for thread in threads:
+        thread.join()
     
-    except IOError:
-
-        return -1
         

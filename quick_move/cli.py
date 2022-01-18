@@ -30,12 +30,12 @@ def cli(written: list, lock: threading.Lock(), max_size: int):
         # Update the bar
         pbar.update(write_copy)
 
-        sleep(5)
-
         # Quickly acquire and release the lock
         lock.acquire()
         write_copy = written[0]
         lock.release()
+
+        sleep(0.25)
     
     #if lock.locked():
        # lock.release()

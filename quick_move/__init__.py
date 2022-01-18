@@ -1,8 +1,6 @@
 import os
 import sys
-import asyncio
 import threading
-import progressbar
 from math import pow
 
 
@@ -145,10 +143,8 @@ def program():
         cli_task.start()
 
         # Now we start to write the data
-        for file_tuple in files_to_write:
-            Transfer.Transfer(file_tuple[0], file_tuple[1], bytes_written, byte_lock)
+        Transfer.transfer(files_to_write, 4, bytes_written, byte_lock)
          
-
         # This will wait for the cli to finish
         cli_task.join()
 
