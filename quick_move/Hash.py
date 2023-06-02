@@ -6,6 +6,13 @@ import random
 import math
 
 def hashFile(file: str) -> str:
+    """This will try to hash a file quickly
+
+    :param file: The file to hash
+    :type file: str
+    :return: The hashed version of the file in string version of hex
+    :rtype: str
+    """
 
     hash_list = hashlib.algorithms_available
     hash_to_use: str

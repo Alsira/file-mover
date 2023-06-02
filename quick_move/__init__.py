@@ -10,22 +10,30 @@ from . import cli
 from . import Hash
 from . import Transfer
 
-def Calcualate_Size(bytes: int) -> str:
+def format_bytes(bytes: int) -> str:
+    """
+    Attempts to format the bytes into a more human readable format
+
+    :param bytes: The number of bytes
+    :type bytes: int
+    :return: A more human readable format. E.g. 10 GiB
+    :rtype: str
+    """
 
     if bytes < 1024:
         return ' '.join([str(bytes), 'B'])
     
     elif bytes < pow(1024, 2):
-        return ' '.join([str(bytes // 1024), 'KB'])
+        return ' '.join([str(bytes // 1024), 'KiB'])
     
     elif bytes < pow(1024, 3):
-        return ' '.join([str(bytes // pow(1024, 2)), 'MB'])
+        return ' '.join([str(bytes // pow(1024, 2)), 'MiB'])
     
     elif bytes < pow(1024, 4):
-        return ' '.join([str(bytes // pow(1024, 3)), 'GB'])
+        return ' '.join([str(bytes // pow(1024, 3)), 'GiB'])
     
     elif bytes < pow(1024, 5):
-        return ' '.join([str(bytes // pow(1024, 4)), 'PB'])
+        return ' '.join([str(bytes // pow(1024, 4)), 'PiB'])
 
     else:
         return "A LOT OF DATA!" 
@@ -34,6 +42,8 @@ def Calcualate_Size(bytes: int) -> str:
 
 # Do something here
 def program():
+    """This is our 'main' function. This is where the program starts
+    """
 
     argv = sys.argv
     argc = len(argv)
@@ -84,10 +94,6 @@ def program():
             os.mkdir(dest)
             print('Created directory ' + dest)
 
-        # Remove the beginning directory
-        src_dir_list = [dir[len(source) + 1:] for dir in src_dir_list]
-        dest_dir_list = [dir[len(dest) + 1:] for dir in dest_dir_list]
-
         print("Finding modified files...")
         
         # Iterate through each path and detect files that need to be replaced (Also create the nessary folders)
@@ -137,7 +143,7 @@ def program():
     # Start the UI
     if total_bytes > 0:
         
-        print("Moving " + Calcualate_Size(total_bytes))
+        print("Moving " + format_bytes(total_bytes))
         cli_task = threading.Thread(target=cli.cli, args=(bytes_written, byte_lock, total_bytes))
         cli_task.setDaemon(True)
         cli_task.start()
